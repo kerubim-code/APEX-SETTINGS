@@ -2,7 +2,7 @@ import os
 import requests
 from pathlib import Path
 import ctypes
-import time  # Pour la pause
+import time
 from colorama import init, Fore, Style
 
 init()
@@ -10,8 +10,15 @@ init()
 GITHUB_REPO = "kerubim-code/APEX-SETTINGS"
 RAW_BASE_URL = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main"
 
-LOCAL_FILES = [
+# Liste complète des fichiers locaux (pour réponse "yes")
+ALL_LOCAL_FILES = [
     "settings.cfg",
+    "videoconfig.txt",
+    "voice_volumes.dat"
+]
+
+# Liste des fichiers locaux SANS settings.cfg (pour réponse "no")
+LOCAL_FILES_NO_SETTINGS = [
     "videoconfig.txt",
     "voice_volumes.dat"
 ]
@@ -43,7 +50,8 @@ def download_file(url, destination_path):
         with open(destination_path, 'wb') as f:
             f.write(response.content)
         return True
-    except:
+    except Exception as e:
+        print(f"Erreur lors du téléchargement de {url}: {e}")
         return False
 
 def download_directory_files(file_list, source_dir, target_dir):
@@ -51,11 +59,15 @@ def download_directory_files(file_list, source_dir, target_dir):
         source_path = f"{source_dir}/{filename}"
         target_path = os.path.join(target_dir, filename)
         url = get_github_raw_url(source_path)
-        download_file(url, target_path)
+        if download_file(url, target_path):
+            print(f"  ✓ {filename} téléchargé avec succès")
+        else:
+            print(f"  ✗ Échec du téléchargement de {filename}")
 
 def download_steam_file():
     url = get_github_raw_url(STEAM_FILE["source"])
     if not is_admin():
+        print("⚠️ NEED TO RUN IN ADMIN")
         return False
     return download_file(url, STEAM_FILE["target"])
 
@@ -66,29 +78,55 @@ def main():
     print("AUTO APEX SETTINGS")
     print("=" * 50)
     print(Fore.GREEN + f"user detect: {username}" + Style.RESET_ALL)
-    print(f"succes (user): {target_base_dir}")
-    print(f"succes (Steam): {STEAM_FILE['target']}")
+    print(f"detect (utilisateur): {target_base_dir}")
+    print(f"detect (Steam): {STEAM_FILE['target']}")
     print("=" * 50)
 
+    # Demande utilisateur
+    while True:
+        response = input("\nDO YOU WANT THE KEYBIND OF KERUBIMM (if no only videosettings) ? (yes/no) : ").strip().lower()
+        if response in ["yes", "no"]:
+            break
+        print("pls 'yes' or 'no'.")
+
+    # Création du dossier si inexistant
     os.makedirs(target_base_dir, exist_ok=True)
 
-    download_directory_files(LOCAL_FILES, "local", target_base_dir / "local")
+    # Téléchargement des fichiers locaux
+    print("\nfolder local...")
+    local_files_to_download = ALL_LOCAL_FILES if response == "yes" else LOCAL_FILES_NO_SETTINGS
+    download_directory_files(local_files_to_download, "local", target_base_dir / "local")
+
+    # Téléchargement des fichiers de profil
+    print("\nfolder profil...")
     download_directory_files(PROFILE_FILES, "profile", target_base_dir / "profile")
+
+    # Téléchargement du fichier Steam
+    print("\nfolder Steam...")
     steam_success = download_steam_file()
 
-    print("\nlocal :")
-    for file in (target_base_dir / "local").glob('*'):
-        print(f"  - {file.name}")
+    # Affichage des fichiers téléchargés
+    print("\n" + "=" * 50)
+    print("FICHIERS TÉLÉCHARGÉS")
+    print("=" * 50)
 
-    print("\nprofile :")
-    for file in (target_base_dir / "profile").glob('*'):
-        print(f"  - {file.name}")
+    print("\nFichiers locaux :")
+    local_dir = target_base_dir / "local"
+    if local_dir.exists():
+        for file in sorted(local_dir.glob('*')):
+            print(f"  - {file.name}")
 
-    print("\nSteam :")
+    print("\nFichiers de profil :")
+    profile_dir = target_base_dir / "profile"
+    if profile_dir.exists():
+        for file in sorted(profile_dir.glob('*')):
+            print(f"  - {file.name}")
+
+    print("\nFichier Steam :")
     print(f"  - autoexec.cfg -> {STEAM_FILE['target']}")
-    print(Fore.GREEN + "\nOPERATION TERMINEE" + Style.RESET_ALL)
 
-    print(Fore.YELLOW + "\nL'auto-close in 10 secondes..." + Style.RESET_ALL)
+    print("\n" + Fore.GREEN + "SUCCÈS" + Style.RESET_ALL)
+    print(Fore.YELLOW + "\nL'autoclose in 10 secondes..." + Style.RESET_ALL)
     time.sleep(10)
 
 if __name__ == "__main__":
