@@ -34,7 +34,7 @@ START APEX AND ENJOY
 - ALL video settings
 - 120 fov
 - keybind for change fps lock
-     press f1= 120fps
-     press f2= 138fps
-     press f3= 165fps
-     press f4= 300fps
+press f1= 120fps
+press f2= 138fps
+press f3= 165fps
+press f4= 300fps
