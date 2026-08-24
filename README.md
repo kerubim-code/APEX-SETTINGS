@@ -24,8 +24,7 @@ No manual file copying needed!
 
 ## STEP 2
 - put this on your apex lunch option 
-+building_cubemaps 1 +mat_letterbox_aspect_goal 0 +mat_letterbox_aspect_threshold 0 +cl_showpos 1 +cl_is_softened_locale 1 +exec autoexec.cfg
-
+-dev -high +building_cubemaps 1 +mat_letterbox_aspect_goal 0 +mat_letterbox_aspect_threshold 0 +cl_showpos 1 +cl_is_softened_locale 1 +exec autoexec.cfg
 ## STEP 3
 START APEX AND ENJOY
 
