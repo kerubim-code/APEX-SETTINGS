@@ -2,6 +2,7 @@ import os
 import requests
 from pathlib import Path
 import ctypes
+import time  # Pour la pause
 from colorama import init, Fore, Style
 
 init()
@@ -64,7 +65,7 @@ def main():
 
     print("AUTO APEX SETTINGS")
     print("=" * 50)
-    print(Fore.GREEN + f"user detect: {username}" + Style.RESET_ALL) 
+    print(Fore.GREEN + f"user detect: {username}" + Style.RESET_ALL)
     print(f"succes (user): {target_base_dir}")
     print(f"succes (Steam): {STEAM_FILE['target']}")
     print("=" * 50)
@@ -86,6 +87,9 @@ def main():
     print("\nSteam :")
     print(f"  - autoexec.cfg -> {STEAM_FILE['target']}")
     print(Fore.GREEN + "\nOPERATION TERMINEE" + Style.RESET_ALL)
+
+    print(Fore.YELLOW + "\nL'auto-close in 10 secondes..." + Style.RESET_ALL)
+    time.sleep(10)
 
 if __name__ == "__main__":
     main()
