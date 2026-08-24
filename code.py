@@ -60,9 +60,9 @@ def download_directory_files(file_list, source_dir, target_dir):
         target_path = os.path.join(target_dir, filename)
         url = get_github_raw_url(source_path)
         if download_file(url, target_path):
-            print(f"  ✓ {filename} téléchargé avec succès")
+            print(f"  ✓ {filename} succès")
         else:
-            print(f"  ✗ Échec du téléchargement de {filename}")
+            print(f"  ✗ Échec {filename}")
 
 def download_steam_file():
     url = get_github_raw_url(STEAM_FILE["source"])
